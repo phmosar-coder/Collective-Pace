@@ -142,3 +142,762 @@
       height: 100vh;
       background: var(--bg-card);
       border-left: 1px solid var(--border-color);
+      z-index: 20;
+      transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .panel.open {
+      transform: translateX(0);
+    }
+
+    .panel-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-back {
+      background: var(--border-color);
+      border: none;
+      color: var(--text-main);
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background 0.2s;
+    }
+
+    .btn-back:hover {
+      background: var(--text-muted);
+      color: var(--bg-dark);
+    }
+
+    .panel-content {
+      padding: 1.5rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    /* Filters & Sorting */
+    .filter-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+
+    .filter-grid select, .filter-grid input {
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.5rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+
+    /* Club Cards */
+    .club-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .club-card {
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .club-card:hover {
+      border-color: var(--accent-neon);
+      transform: translateY(-2px);
+    }
+
+    .club-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .club-card .tagline {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .rating-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ffd166;
+      margin-bottom: 0.75rem;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+    }
+
+    .badge.free {
+      background: rgba(0, 255, 136, 0.1);
+      color: var(--accent-neon);
+      border-color: var(--accent-neon);
+    }
+
+    /* Club Detail Overlay */
+    .club-detail-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--bg-card);
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .club-detail-overlay.active {
+      transform: translateX(0);
+    }
+
+    /* Review Form */
+    .review-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .review-form input, .review-form textarea, .review-form select {
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.6rem;
+      border-radius: 6px;
+      font-family: inherit;
+    }
+
+    .btn-submit {
+      background: var(--accent-neon);
+      color: var(--bg-dark);
+      border: none;
+      padding: 0.75rem;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-submit:hover {
+      background: var(--accent-hover);
+    }
+
+    /* Mobile Responsive - Bottom Sheet */
+    @media (max-width: 768px) {
+      .panel {
+        width: 100vw;
+        height: 75vh;
+        top: auto;
+        bottom: 0;
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+        border-radius: 20px 20px 0 0;
+        transform: translateY(100%);
+      }
+
+      .panel.open {
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <i class="fa-solid fa-person-running"></i>
+      <div>
+        <h1>PacePulse</h1>
+        <p>Discover & join running communities worldwide</p>
+      </div>
+    </div>
+
+    <!-- Keyboard & Accessibility Dropdown Fallback -->
+    <div class="city-search-fallback">
+      <label for="citySelect"><i class="fa-solid fa-globe"></i></label>
+      <select id="citySelect" aria-label="Select City Fallback">
+        <option value="">Jump to a city...</option>
+      </select>
+    </div>
+  </header>
+
+  <!-- 3D Globe Container -->
+  <div id="globe-container"></div>
+
+  <!-- Side Panel / Bottom Sheet for City Clubs -->
+  <aside id="cityPanel" class="panel" aria-label="City Running Clubs Panel">
+    <div class="panel-header">
+      <button id="btnBack" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Back to Globe</button>
+      <h2 id="cityName">City Name</h2>
+    </div>
+
+    <div class="panel-content">
+      <!-- Filtering & Sorting -->
+      <div class="filter-section">
+        <div class="filter-grid">
+          <select id="filterFree">
+            <option value="all">All Costs</option>
+            <option value="free">Free Only</option>
+            <option value="paid">Paid Only</option>
+          </select>
+          <select id="filterPace">
+            <option value="all">All Pace Levels</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Fast">Fast</option>
+          </select>
+          <select id="filterDay">
+            <option value="all">Any Day</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+          </select>
+          <select id="sortClubs">
+            <option value="rating">Best Rated</option>
+            <option value="reviews">Most Reviews</option>
+            <option value="capacity-asc">Smallest Group</option>
+            <option value="capacity-desc">Largest Group</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Club Cards List -->
+      <div id="clubList" class="club-list"></div>
+    </div>
+
+    <!-- Club Detail Sub-Panel Overlay -->
+    <div id="clubDetailOverlay" class="club-detail-overlay">
+      <div class="panel-header">
+        <button id="btnBackToCity" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Back to List</button>
+      </div>
+      <div id="clubDetailContent" class="panel-content"></div>
+    </div>
+  </aside>
+
+  <script>
+    /* =========================================================================
+       1. DATA STRUCTURE (15 Global Cities, Fictional Clubs & Persisted Reviews)
+       ========================================================================= */
+    const initialCityData = [
+      {
+        city: "Vienna", country: "Austria", lat: 48.2082, lng: 16.3738,
+        clubs: [
+          {
+            id: "vienna-1",
+            name: "Danube Dashers",
+            tagline: "Speedwork with a view of the river",
+            personality: "Competitive & high-energy",
+            meetingPoint: "Donauinsel U1 Station",
+            day: "Tuesday", time: "18:30",
+            distance: "8 - 12 km",
+            paceLevels: ["Intermediate", "Fast"],
+            capacity: 45,
+            price: "Free",
+            perks: ["Gear Storage", "Free Water"],
+            description: "An energetic group tackling interval runs along the Danube Canal.",
+            reviews: [
+              { name: "Lukas M.", rating: 5, title: "Pushed my limits!", text: "Great interval session. Very friendly leaders.", date: "2026-03-12" },
+              { name: "Anna K.", rating: 4, title: "Fast pace", text: "A bit tough if you are a true beginner, but awesome energy.", date: "2026-02-28" }
+            ]
+          },
+          {
+            id: "vienna-2",
+            name: "Coffee & Kilometers Vienna",
+            tagline: "Easy morning runs ending at local roasteries",
+            personality: "Social sunrise jog",
+            meetingPoint: "Praterstern Wheel",
+            day: "Saturday", time: "08:00",
+            distance: "5 km",
+            paceLevels: ["Beginner", "Intermediate"],
+            capacity: 80,
+            price: "Free",
+            perks: ["Free Post-run Coffee", "Social Vibe"],
+            description: "Start your weekend right with a relaxed loop through the Hauptallee followed by espresso.",
+            reviews: [
+              { name: "Sophie B.", rating: 5, title: "Best Saturday ritual", text: "The coffee talk afterwards is even better than the run!", date: "2026-04-01" }
+            ]
+          }
+        ]
+      },
+      {
+        city: "Zurich", country: "Switzerland", lat: 47.3769, lng: 8.5417,
+        clubs: [
+          {
+            id: "zurich-1",
+            name: "Limmat Lopers",
+            tagline: "Scenic river runs through Zurich center",
+            personality: "After-work relaxed",
+            meetingPoint: "Zürich HB Hauptbahnhof",
+            day: "Thursday", time: "19:00",
+            distance: "7 km",
+            paceLevels: ["Beginner", "Intermediate"],
+            capacity: 35,
+            price: "Free",
+            perks: ["Showers Available"],
+            description: "Unwind after work along the Limmat. All paces welcome!",
+            reviews: [
+              { name: "Marc S.", rating: 5, title: "Super friendly", text: "Loved the trail along the river.", date: "2026-01-15" }
+            ]
+          }
+        ]
+      },
+      {
+        city: "London", country: "UK", lat: 51.5074, lng: -0.1278,
+        clubs: [
+          {
+            id: "london-1",
+            name: "Thames Trotters",
+            tagline: "Pint & Pavements evening run",
+            personality: "Pub & Social",
+            meetingPoint: "Southbank Centre",
+            day: "Wednesday", time: "18:45",
+            distance: "6 km",
+            paceLevels: ["Beginner", "Intermediate", "Fast"],
+            capacity: 120,
+            price: "Free",
+            perks: ["Free Post-run Drinks", "Bag Drop"],
+            description: "Cross historic bridges and end with drinks at a nearby river pub.",
+            reviews: [
+              { name: "Dave P.", rating: 5, title: "Classic London vibe", text: "Great social crowd!", date: "2026-03-20" }
+            ]
+          }
+        ]
+      },
+      {
+        city: "Berlin", country: "Germany", lat: 52.5200, lng: 13.4050,
+        clubs: [
+          {
+            id: "berlin-1",
+            name: "Spree Striders",
+            tagline: "Techno beats & night runs",
+            personality: "Night-owl & Energetic",
+            meetingPoint: "Warschauer Straße",
+            day: "Friday", time: "20:00",
+            distance: "10 km",
+            paceLevels: ["Intermediate", "Fast"],
+            capacity: 200,
+            price: "Paid (€5/run)",
+            perks: ["Free Post-run Snacks", "Gear Storage", "Music Pacemakers"],
+            description: "A loud, music-fueled night run winding through Friedrichshain.",
+            reviews: [
+              { name: "Mia N.", rating: 5, title: "Unreal energy", text: "Running with portable speakers was epic.", date: "2026-04-05" }
+            ]
+          }
+        ]
+      },
+      {
+        city: "New York", country: "USA", lat: 40.7128, lng: -74.0060,
+        clubs: [
+          {
+            id: "ny-1",
+            name: "Central Park Striders",
+            tagline: "Sunrise laps & skyline views",
+            personality: "Morning Motivation",
+            meetingPoint: "Columbus Circle",
+            day: "Monday", time: "06:30",
+            distance: "10 km",
+            paceLevels: ["Beginner", "Intermediate", "Fast"],
+            capacity: 150,
+            price: "Free",
+            perks: ["Coached Warmup"],
+            description: "Conquer the Central Park loop before the city wakes up.",
+            reviews: [
+              { name: "Chris T.", rating: 4, title: "Early but worth it", text: "Seeing the sunrise over Manhattan while running is unreal.", date: "2026-02-11" }
+            ]
+          }
+        ]
+      },
+      {
+        city: "Lisbon", country: "Portugal", lat: 38.7223, lng: -9.1393,
+        clubs: [
+          {
+            id: "lisbon-1",
+            name: "Seven Hills Hill-Climbers",
+            tagline: "Elevate your training with Lisbon elevation",
+            personality: "Trail & Hill Workout",
+            meetingPoint: "Miradouro de São Pedro de Alcântara",
+            day: "Tuesday", time: "19:00",
+            distance: "8 km",
+            paceLevels: ["Fast"],
+            capacity: 25,
+            price: "Free",
+            perks: ["Free Electrolytes"],
+            description: "Challenging incline training through historic cobblestone streets.",
+            reviews: [
+              { name: "Joao P.", rating: 5, title: "Leg burner!", text: "Definite workout, loved every second.", date: "2026-03-30" }
+            ]
+          }
+        ]
+      },
+      {
+        city: "Tokyo", country: "Japan", lat: 35.6762, lng: 139.6503,
+        clubs: [
+          {
+            id: "tokyo-1",
+            name: "Imperial Palace Loopers",
+            tagline: "Precision & harmony around the moat",
+            personality: "Structured & Welcoming",
+            meetingPoint: "Sakuradamon Gate",
+            day: "Thursday", time: "18:30",
+            distance: "5 - 15 km",
+            paceLevels: ["Beginner", "Intermediate"],
+            capacity: 90,
+            price: "Free",
+            perks: ["Locker Access", "Post-run Drinks"],
+            description: "Run the iconic 5km loop around Tokyo Imperial Palace with organized pace groups.",
+            reviews: [
+              { name: "Kenji M.", rating: 5, title: "Super organized", text: "Paces were exact and leaders were encouraging.", date: "2026-03-01" }
+            ]
+          }
+        ]
+      },
+      {
+        city: "Singapore", country: "Singapore", lat: 1.3521, lng: 103.8198,
+        clubs: [
+          {
+            id: "sg-1",
+            name: "Marina Bay Night Runners",
+            tagline: "Cool breeze under urban lights",
+            personality: "Tropical Night Run",
+            meetingPoint: "ArtScience Museum",
+            day: "Wednesday", time: "19:30",
+            distance: "6 km",
+            paceLevels: ["Beginner", "Intermediate"],
+            capacity: 110,
+            price: "Free",
+            perks: ["Free Hydration", "Gear Storage"],
+            description: "Beat the heat with a late evening run around Marina Bay Sands.",
+            reviews: [
+              { name: "Priya S.", rating: 5, title: "Great views", text: "Light show coincides with the finish!", date: "2026-03-22" }
+            ]
+          }
+        ]
+      },
+      {
+        city: "Sydney", country: "Australia", lat: -33.8688, lng: 151.2093,
+        clubs: [
+          {
+            id: "syd-1",
+            name: "Bondi Harbor Harriers",
+            tagline: "Ocean breeze & post-run dip",
+            personality: "Beach & Coastal",
+            meetingPoint: "Bondi Icebergs",
+            day: "Sunday", time: "07:30",
+            distance: "8 km",
+            paceLevels: ["Beginner", "Intermediate", "Fast"],
+            capacity: 300,
+            price: "Free",
+            perks: ["Free Post-run Snacks", "Beach Swim"],
+            description: "Scenic coastal trail run from Bondi to Coogee, ending with a jump in the ocean.",
+            reviews: [
+              { name: "Liam O.", rating: 5, title: "Pure paradise", text: "The ocean swim after 8k is unbeatable.", date: "2026-04-10" }
+            ]
+          }
+        ]
+      },
+      {
+        city: "Cape Town", country: "South Africa", lat: -33.9249, lng: 18.4241,
+        clubs: [
+          {
+            id: "ct-1",
+            name: "Table Mountain Trail Tribe",
+            tagline: "Off-road adventures above the city",
+            personality: "Trail & Nature",
+            meetingPoint: "Kloof Nek Parking",
+            day: "Saturday", time: "07:00",
+            distance: "12 km",
+            paceLevels: ["Intermediate", "Fast"],
+            capacity: 40,
+            price: "Free",
+            perks: ["Safety Guides", "Free Energy Bars"],
+            description: "Technical single-track trails winding along the slopes of Table Mountain.",
+            reviews: [
+              { name: "Thabo N.", rating: 5, title: "Breathtaking", text: "Incredible views. Make sure you bring trail shoes!", date: "2026-03-18" }
+            ]
+          }
+        ]
+      }
+    ];
+
+    // Load persisted state or initial data
+    let globalData = JSON.parse(localStorage.getItem('pacepulse_data')) || initialCityData;
+
+    function saveData() {
+      localStorage.setItem('pacepulse_data', JSON.stringify(globalData));
+    }
+
+    /* =========================================================================
+       2. GLOBE INITIALIZATION (Globe.gl)
+       ========================================================================= */
+    let activeCity = null;
+
+    const globe = Globe()
+      (document.getElementById('globe-container'))
+      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
+      .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
+      .htmlElementsData(globalData)
+      .htmlElement(d => {
+        const el = document.createElement('div');
+        const totalClubs = d.clubs.length;
+        el.innerHTML = `
+          <div style="cursor:pointer; text-align:center;" onclick="selectCity('${d.city}')">
+            <div style="width:16px; height:16px; background:#00ff88; border-radius:50%; box-shadow:0 0 12px #00ff88; margin:0 auto;"></div>
+            <div style="background:rgba(18,24,36,0.9); padding:2px 8px; border-radius:12px; border:1px solid #00ff88; font-size:11px; white-space:nowrap; margin-top:4px;">
+              <b>${d.city}</b> (${totalClubs})
+            </div>
+          </div>`;
+        return el;
+      });
+
+    // Auto-rotation when idle
+    globe.controls().autoRotate = true;
+    globe.controls().autoRotateSpeed = 0.6;
+
+    /* =========================================================================
+       3. INTERACTION & NAVIGATION
+       ========================================================================= */
+    const citySelect = document.getElementById('citySelect');
+    const cityPanel = document.getElementById('cityPanel');
+    const cityNameEl = document.getElementById('cityName');
+    const clubListEl = document.getElementById('clubList');
+    const clubDetailOverlay = document.getElementById('clubDetailOverlay');
+    const clubDetailContent = document.getElementById('clubDetailContent');
+
+    // Populate Accessibility Dropdown
+    globalData.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.city;
+      opt.textContent = `${c.city}, ${c.country} (${c.clubs.length} clubs)`;
+      citySelect.appendChild(opt);
+    });
+
+    citySelect.addEventListener('change', (e) => {
+      if (e.target.value) selectCity(e.target.value);
+    });
+
+    function selectCity(cityName) {
+      const cityObj = globalData.find(c => c.city === cityName);
+      if (!cityObj) return;
+
+      activeCity = cityObj;
+      cityNameEl.textContent = `${cityObj.city}, ${cityObj.country}`;
+
+      // Animate Globe camera to location
+      globe.pointOfView({ lat: cityObj.lat, lng: cityObj.lng, altitude: 0.8 }, 1800);
+      globe.controls().autoRotate = false;
+
+      // Render Clubs & Open Panel
+      renderClubList();
+      cityPanel.classList.add('open');
+    }
+
+    document.getElementById('btnBack').addEventListener('click', () => {
+      cityPanel.classList.remove('open');
+      clubDetailOverlay.classList.remove('active');
+      globe.pointOfView({ altitude: 2.5 }, 1500);
+      globe.controls().autoRotate = true;
+    });
+
+    document.getElementById('btnBackToCity').addEventListener('click', () => {
+      clubDetailOverlay.classList.remove('active');
+    });
+
+    /* =========================================================================
+       4. FILTERING, SORTING & CLUB LIST RENDERING
+       ========================================================================= */
+    const filterFree = document.getElementById('filterFree');
+    const filterPace = document.getElementById('filterPace');
+    const filterDay = document.getElementById('filterDay');
+    const sortClubs = document.getElementById('sortClubs');
+
+    [filterFree, filterPace, filterDay, sortClubs].forEach(el => el.addEventListener('change', renderClubList));
+
+    function calculateAverageRating(reviews) {
+      if (!reviews || reviews.length === 0) return 0;
+      const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
+      return (sum / reviews.length).toFixed(1);
+    }
+
+    function renderClubList() {
+      if (!activeCity) return;
+      clubListEl.innerHTML = '';
+
+      let filtered = [...activeCity.clubs];
+
+      // Filters
+      if (filterFree.value === 'free') filtered = filtered.filter(c => c.price.toLowerCase() === 'free');
+      if (filterFree.value === 'paid') filtered = filtered.filter(c => c.price.toLowerCase() !== 'free');
+      if (filterPace.value !== 'all') filtered = filtered.filter(c => c.paceLevels.includes(filterPace.value));
+      if (filterDay.value !== 'all') filtered = filtered.filter(c => c.day === filterDay.value);
+
+      // Sorting
+      filtered.sort((a, b) => {
+        const avgA = parseFloat(calculateAverageRating(a.reviews));
+        const avgB = parseFloat(calculateAverageRating(b.reviews));
+        if (sortClubs.value === 'rating') return avgB - avgA;
+        if (sortClubs.value === 'reviews') return b.reviews.length - a.reviews.length;
+        if (sortClubs.value === 'capacity-asc') return a.capacity - b.capacity;
+        if (sortClubs.value === 'capacity-desc') return b.capacity - a.capacity;
+        return 0;
+      });
+
+      if (filtered.length === 0) {
+        clubListEl.innerHTML = `<p style="color:var(--text-muted); padding:1rem;">No clubs match your criteria.</p>`;
+        return;
+      }
+
+      filtered.forEach(club => {
+        const avgRating = calculateAverageRating(club.reviews);
+        const card = document.createElement('div');
+        card.className = 'club-card';
+        card.onclick = () => openClubDetail(club.id);
+
+        card.innerHTML = `
+          <h3>${club.name}</h3>
+          <div class="tagline">${club.tagline}</div>
+          <div class="rating-badge">
+            <i class="fa-solid fa-star"></i> ${avgRating} (${club.reviews.length} reviews)
+          </div>
+          <div class="badges">
+            <span class="badge ${club.price === 'Free' ? 'free' : ''}">${club.price}</span>
+            <span class="badge"><i class="fa-solid fa-users"></i> ${club.capacity} max</span>
+            <span class="badge"><i class="fa-solid fa-calendar"></i> ${club.day}s ${club.time}</span>
+          </div>
+        `;
+        clubListEl.appendChild(card);
+      });
+    }
+
+    /* =========================================================================
+       5. CLUB DETAIL VIEW & PERSISTENT REVIEWS
+       ========================================================================= */
+    function openClubDetail(clubId) {
+      const club = activeCity.clubs.find(c => c.id === clubId);
+      if (!club) return;
+
+      const avgRating = calculateAverageRating(club.reviews);
+
+      clubDetailContent.innerHTML = `
+        <h2>${club.name}</h2>
+        <p style="color:var(--text-muted); margin-bottom:1rem;">${club.tagline}</p>
+        
+        <div class="rating-badge" style="font-size:1.1rem;">
+          <i class="fa-solid fa-star"></i> ${avgRating} / 5.0 (${club.reviews.length} reviews)
+        </div>
+
+        <p style="margin:1rem 0; line-height:1.5;">${club.description}</p>
+
+        <div style="display:flex; flex-direction:column; gap:0.5rem; background:var(--bg-dark); padding:1rem; border-radius:8px; border:1px solid var(--border-color); margin-bottom:1.5rem;">
+          <div><i class="fa-solid fa-location-dot" style="color:var(--accent-neon)"></i> <b>Meeting Point:</b> ${club.meetingPoint}</div>
+          <div><i class="fa-solid fa-clock" style="color:var(--accent-neon)"></i> <b>Schedule:</b> Every ${club.day} at ${club.time}</div>
+          <div><i class="fa-solid fa-route" style="color:var(--accent-neon)"></i> <b>Distance:</b> ${club.distance}</div>
+          <div><i class="fa-solid fa-gauge-high" style="color:var(--accent-neon)"></i> <b>Paces:</b> ${club.paceLevels.join(', ')}</div>
+          <div><i class="fa-solid fa-gift" style="color:var(--accent-neon)"></i> <b>Perks:</b> ${club.perks.join(', ')}</div>
+        </div>
+
+        <h3>Reviews</h3>
+        <div id="reviewContainer" style="display:flex; flex-direction:column; gap:0.75rem; margin-top:1rem;">
+          ${club.reviews.map(r => `
+            <div style="background:var(--bg-dark); padding:0.75rem; border-radius:6px; border:1px solid var(--border-color);">
+              <div style="display:flex; justify-space-between; align-items:center;">
+                <b>${r.name}</b>
+                <span style="color:#ffd166; font-size:0.85rem;"><i class="fa-solid fa-star"></i> ${r.rating}</span>
+              </div>
+              <div style="font-weight:600; font-size:0.9rem; margin-top:0.25rem;">${r.title}</div>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.25rem;">${r.text}</p>
+              <div style="font-size:0.7rem; color:var(--text-muted); margin-top:0.4rem;">${r.date}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <!-- Review Form -->
+        <form id="addReviewForm" class="review-form">
+          <h4>Leave a Review</h4>
+          <select id="revRating" required>
+            <option value="5">5 Stars - Outstanding</option>
+            <option value="4">4 Stars - Very Good</option>
+            <option value="3">3 Stars - Average</option>
+            <option value="2">2 Stars - Below Expectation</option>
+            <option value="1">1 Star - Poor</option>
+          </select>
+          <input type="text" id="revName" placeholder="Your Name" required />
+          <input type="text" id="revTitle" placeholder="Review Title" required />
+          <textarea id="revText" rows="3" placeholder="Write your experience..." required></textarea>
+          <button type="submit" class="btn-submit">Submit Review</button>
+        </form>
+      `;
+
+      clubDetailOverlay.classList.add('active');
+
+      // Bind Review Submission
+      document.getElementById('addReviewForm').onsubmit = (e) => {
+        e.preventDefault();
+        const newReview = {
+          name: document.getElementById('revName').value,
+          rating: parseInt(document.getElementById('revRating').value),
+          title: document.getElementById('revTitle').value,
+          text: document.getElementById('revText').value,
+          date: new Date().toISOString().split('T')[0]
+        };
+
+        club.reviews.unshift(newReview);
+        saveData();
+        renderClubList();
+        openClubDetail(clubId); // Re-render detail view instantly
+      };
+    }
+  </script>
+</body>
+</html>
