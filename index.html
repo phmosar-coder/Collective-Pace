@@ -122,39 +122,95 @@
       z-index: 1;
     }
 
-    /* Interactive Globe Marker Pin Styles */
+    /* Floating Clouds Container for Motivational Quotes */
+    #cloud-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 5;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .quote-cloud {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 30px;
+      padding: 0.75rem 1.25rem;
+      color: var(--text-main);
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 255, 136, 0.1);
+      opacity: 0;
+      animation: floatCloud 22s linear forwards;
+    }
+
+    .quote-cloud i {
+      color: var(--accent-neon);
+      font-size: 1.1rem;
+    }
+
+    @keyframes floatCloud {
+      0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.9);
+      }
+      10% {
+        opacity: 0.9;
+        transform: translateY(0px) scale(1);
+      }
+      90% {
+        opacity: 0.9;
+        transform: translateY(-40px) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-60px) scale(0.95);
+      }
+    }
+
+    /* Geographically Centered Marker Pin Styles */
     .globe-pin-wrapper {
       cursor: pointer;
       display: flex;
       flex-direction: column;
       align-items: center;
+      transform: translate(-50%, -50%);
       transition: transform 0.2s ease;
+      user-select: none;
     }
 
     .globe-pin-wrapper:hover {
-      transform: scale(1.15);
+      transform: translate(-50%, -50%) scale(1.2);
       z-index: 100;
     }
 
     .globe-dot {
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
       background: var(--accent-neon);
       border-radius: 50%;
-      box-shadow: 0 0 15px var(--accent-neon), 0 0 30px var(--accent-neon);
+      box-shadow: 0 0 12px var(--accent-neon), 0 0 24px var(--accent-neon);
       border: 2px solid #ffffff;
     }
 
     .globe-label {
       background: rgba(18, 24, 36, 0.92);
-      padding: 3px 10px;
-      border-radius: 12px;
+      padding: 3px 8px;
+      border-radius: 10px;
       border: 1px solid var(--accent-neon);
       font-size: 11px;
       font-weight: 700;
       color: var(--text-main);
       white-space: nowrap;
-      margin-top: 5px;
+      margin-top: 4px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     }
 
@@ -396,6 +452,9 @@
 
   <!-- 3D Globe Container -->
   <div id="globe-container"></div>
+
+  <!-- Floating Motivational Clouds Layer -->
+  <div id="cloud-container"></div>
 
   <!-- Side Panel / Bottom Sheet for City Clubs -->
   <aside id="cityPanel" class="panel" aria-label="Capital Running Clubs Panel">
@@ -644,7 +703,7 @@
     }
 
     /* =========================================================================
-       2. GLOBE INITIALIZATION WITH CLICKABLE GREEN PINS
+       2. GLOBE INITIALIZATION (MINIMAL SLOW ROTATION & ACCURATE GEOGRAPHY)
        ========================================================================= */
     let activeCity = null;
 
@@ -653,6 +712,9 @@
       .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
       .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
       .htmlElementsData(globalData)
+      .htmlLat(d => d.lat)
+      .htmlLng(d => d.lng)
+      .htmlAltitude(0.01)
       .htmlElement(d => {
         const wrapper = document.createElement('div');
         wrapper.className = 'globe-pin-wrapper';
@@ -663,7 +725,6 @@
           <div class="globe-label">${d.city} (${d.clubs.length})</div>
         `;
 
-        // Direct click event listener on the green glowing pin element
         wrapper.addEventListener('click', (e) => {
           e.stopPropagation();
           selectCity(d.city);
@@ -672,12 +733,64 @@
         return wrapper;
       });
 
-    // Controls configuration
+    // Minimal, ultra-slow auto-rotation
     globe.controls().autoRotate = true;
-    globe.controls().autoRotateSpeed = 0.5;
+    globe.controls().autoRotateSpeed = 0.15;
 
     /* =========================================================================
-       3. INTERACTION & NAVIGATION
+       3. FLOATING MOTIVATIONAL QUOTE CLOUDS (MAX 4 VISIBLE)
+       ========================================================================= */
+    const motivationalQuotes = [
+      "Every step brings you closer to your goals.",
+      "Run together, conquer your miles as one.",
+      "Your speed doesn't matter, forward momentum does.",
+      "Find your pace, find your true community.",
+      "Turn your morning alarm into pure inspiration.",
+      "One run can change your entire day.",
+      "Run the world, one capital at a time.",
+      "Stronger together with every single stride.",
+      "Pace is a mindset, not just speed."
+    ];
+
+    const cloudContainer = document.getElementById('cloud-container');
+    let activeCloudCount = 0;
+    const MAX_CLOUDS = 4;
+
+    function spawnCloud() {
+      if (activeCloudCount >= MAX_CLOUDS) return;
+
+      const cloud = document.createElement('div');
+      cloud.className = 'quote-cloud';
+
+      // Pick random quote (max 10 words)
+      const quote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
+      cloud.innerHTML = `<i class="fa-solid fa-cloud-bolt"></i> <span>"${quote}"</span>`;
+
+      // Random position across viewport
+      const topPos = Math.floor(Math.random() * 60) + 15; // 15% - 75% height
+      const leftPos = Math.floor(Math.random() * 65) + 10; // 10% - 75% width
+
+      cloud.style.top = `${topPos}%`;
+      cloud.style.left = `${leftPos}%`;
+
+      cloudContainer.appendChild(cloud);
+      activeCloudCount++;
+
+      // Automatically remove cloud after animation ends
+      cloud.addEventListener('animationend', () => {
+        cloud.remove();
+        activeCloudCount--;
+      });
+    }
+
+    // Initial spawn & continuous interval check
+    for(let i = 0; i < 3; i++) {
+      setTimeout(spawnCloud, i * 2500);
+    }
+    setInterval(spawnCloud, 6000);
+
+    /* =========================================================================
+       4. INTERACTION & NAVIGATION
        ========================================================================= */
     const citySelect = document.getElementById('citySelect');
     const cityPanel = document.getElementById('cityPanel');
@@ -727,7 +840,7 @@
     });
 
     /* =========================================================================
-       4. FILTERING, SORTING & CLUB LIST RENDERING
+       5. FILTERING, SORTING & CLUB LIST RENDERING
        ========================================================================= */
     const filterFree = document.getElementById('filterFree');
     const filterPace = document.getElementById('filterPace');
@@ -793,7 +906,7 @@
     }
 
     /* =========================================================================
-       5. CLUB DETAIL VIEW & PERSISTENT REVIEWS
+       6. CLUB DETAIL VIEW & PERSISTENT REVIEWS
        ========================================================================= */
     function openClubDetail(clubId) {
       const club = activeCity.clubs.find(c => c.id === clubId);
