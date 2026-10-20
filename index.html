@@ -3,10 +3,142 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My First Page</title>
-</head>
-<body>
-  <h1>Hello, world!</h1>
-  <p>This is my first webpage on GitHub.</p>
-</body>
-</html>
+  <title>PacePulse — Global Running Club Discovery</title>
+
+  <!-- Google Fonts & FontAwesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Globe.gl & Three.js Libraries -->
+  <script src="https://unpkg.com/three"></script>
+  <script src="https://unpkg.com/globe.gl"></script>
+
+  <style>
+    :root {
+      --bg-dark: #0a0d14;
+      --bg-card: #121824;
+      --bg-card-hover: #1b2334;
+      --accent-neon: #00ff88;
+      --accent-hover: #00cc6d;
+      --text-main: #f0f4f8;
+      --text-muted: #8a99ad;
+      --border-color: #232d3f;
+      --font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 2rem;
+      background: linear-gradient(180deg, rgba(10,13,20,0.9) 0%, rgba(10,13,20,0) 100%);
+      pointer-events: none;
+    }
+
+    header * {
+      pointer-events: auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand i {
+      font-size: 1.8rem;
+      color: var(--accent-neon);
+    }
+
+    .brand h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .brand p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Accessibility / Fallback Search */
+    .city-search-fallback {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(18, 24, 36, 0.8);
+      border: 1px solid var(--border-color);
+      border-radius: 2rem;
+      padding: 0.4rem 1rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .city-search-fallback select {
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .city-search-fallback select option {
+      background-color: var(--bg-card);
+      color: var(--text-main);
+    }
+
+    /* Main Container & Globe */
+    #globe-container {
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    /* Custom Globe Tooltip */
+    .scene-tooltip {
+      background: var(--bg-card) !important;
+      border: 1px solid var(--accent-neon) !important;
+      border-radius: 8px !important;
+      padding: 8px 12px !important;
+      color: var(--text-main) !important;
+      font-family: var(--font-family) !important;
+      box-shadow: 0 4px 20px rgba(0, 255, 136, 0.15);
+    }
+
+    /* Side Panel / Bottom Sheet */
+    .panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 450px;
+      height: 100vh;
+      background: var(--bg-card);
+      border-left: 1px solid var(--border-color);
