@@ -83,6 +83,7 @@
     .brand p {
       font-size: 0.85rem;
       color: var(--text-muted);
+      margin-top: 2px;
     }
 
     /* Accessibility / Fallback Search */
@@ -129,7 +130,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      z-index: 5;
+      z-index: 2;
       pointer-events: none;
       overflow: hidden;
     }
@@ -178,27 +179,29 @@
 
     /* Geographically Centered Marker Pin Styles */
     .globe-pin-wrapper {
-      cursor: pointer;
+      cursor: pointer !important;
       display: flex;
       flex-direction: column;
       align-items: center;
       transform: translate(-50%, -50%);
       transition: transform 0.2s ease;
       user-select: none;
+      pointer-events: auto !important;
     }
 
     .globe-pin-wrapper:hover {
-      transform: translate(-50%, -50%) scale(1.2);
+      transform: translate(-50%, -50%) scale(1.25);
       z-index: 100;
     }
 
     .globe-dot {
-      width: 14px;
-      height: 14px;
+      width: 16px;
+      height: 16px;
       background: var(--accent-neon);
       border-radius: 50%;
-      box-shadow: 0 0 12px var(--accent-neon), 0 0 24px var(--accent-neon);
+      box-shadow: 0 0 14px var(--accent-neon), 0 0 28px var(--accent-neon);
       border: 2px solid #ffffff;
+      pointer-events: auto !important;
     }
 
     .globe-label {
@@ -212,6 +215,7 @@
       white-space: nowrap;
       margin-top: 4px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      pointer-events: auto !important;
     }
 
     /* Side Panel / Bottom Sheet */
@@ -437,7 +441,7 @@
       <i class="fa-solid fa-person-running"></i>
       <div>
         <h1>Collective Pace</h1>
-        <p>Global World Capital Running Communities</p>
+        <p>Find a Running Club wherever you are in the world</p>
       </div>
     </div>
 
@@ -650,7 +654,7 @@
     }
 
     /* =========================================================================
-       2. GLOBE INITIALIZATION (MINIMAL SLOW ROTATION & ACCURATE GEOGRAPHY)
+       2. GLOBE INITIALIZATION (CLICKABLE CITY PINS & GEOGRAPHIC PLACEMENT)
        ========================================================================= */
     let activeCity = null;
 
@@ -672,16 +676,18 @@
           <div class="globe-label">${d.city} (${d.clubs.length})</div>
         `;
 
-        wrapper.addEventListener('click', (e) => {
+        // Direct click event handling for all dots and labels
+        wrapper.onclick = (e) => {
+          e.preventDefault();
           e.stopPropagation();
           selectCity(d.city);
-        });
+        };
 
         return wrapper;
       });
 
     globe.controls().autoRotate = true;
-    globe.controls().autoRotateSpeed = 0.15;
+    globe.controls().autoRotateSpeed = 0.2;
 
     /* =========================================================================
        3. FLOATING MOTIVATIONAL QUOTE CLOUDS (MAX 4 VISIBLE)
